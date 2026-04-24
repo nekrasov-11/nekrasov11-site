@@ -144,6 +144,57 @@ body::after {
     display: none;
 }
 
+.hero-sound-toggle {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+    z-index: 2;
+}
+
+.hero-sound-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.hero-sound-toggle svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+.hero-sound-toggle .icon-unmuted { display: none; }
+.hero-sound-toggle.is-muted .icon-muted { display: block; }
+.hero-sound-toggle.is-muted .icon-unmuted { display: none; }
+.hero-sound-toggle:not(.is-muted) .icon-muted { display: none; }
+.hero-sound-toggle:not(.is-muted) .icon-unmuted { display: block; }
+
+@media (max-width: 600px) {
+    .hero-sound-toggle {
+        right: 12px;
+        bottom: 12px;
+        padding: 8px 12px;
+    }
+    .hero-sound-label {
+        display: none;
+    }
+}
+
 .hero-placeholder {
     position: absolute;
     inset: 0;
