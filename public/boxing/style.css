@@ -147,7 +147,7 @@ body::after {
 
 .hero-sound-toggle {
     position: absolute;
-    right: 20px;
+    left: 20px;
     bottom: 20px;
     display: inline-flex;
     align-items: center;
@@ -187,12 +187,69 @@ body::after {
 
 @media (max-width: 600px) {
     .hero-sound-toggle {
-        right: 12px;
+        left: 12px;
         bottom: 12px;
         padding: 8px 12px;
     }
     .hero-sound-label {
         display: none;
+    }
+}
+
+.tg-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 6px 18px rgba(34, 158, 217, 0.45), 0 2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tg-fab svg {
+    position: relative;
+    z-index: 2;
+    transform: translateX(-1px);
+}
+
+.tg-fab:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 24px rgba(34, 158, 217, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.tg-fab:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.tg-fab-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(42, 171, 238, 0.5);
+    z-index: 1;
+    animation: tg-pulse 2.4s ease-out infinite;
+}
+
+@keyframes tg-pulse {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    70%  { transform: scale(1.6); opacity: 0;   }
+    100% { transform: scale(1.6); opacity: 0;   }
+}
+
+@media (max-width: 600px) {
+    .tg-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 54px;
+        height: 54px;
     }
 }
 
