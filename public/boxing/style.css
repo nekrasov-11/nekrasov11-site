@@ -282,6 +282,7 @@ body::after {
         right: 16px;
         bottom: 16px;
         gap: 10px;
+        flex-direction: column-reverse;
     }
     .fab {
         width: 54px;
