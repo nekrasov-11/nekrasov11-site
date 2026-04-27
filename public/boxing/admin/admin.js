@@ -73,6 +73,18 @@
             schedule.groups[gIdx].name = nameInput.value;
         });
 
+        const downloadBtn = document.createElement("button");
+        downloadBtn.className = "btn btn-icon";
+        downloadBtn.type = "button";
+        downloadBtn.title = "Скачать сторис";
+        downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+        downloadBtn.addEventListener("click", function () {
+            generateStoryImage(schedule.groups[gIdx]).catch(function (err) {
+                console.error(err);
+                showStatus("Не удалось сформировать картинку", "error");
+            });
+        });
+
         const removeBtn = document.createElement("button");
         removeBtn.className = "btn btn-icon";
         removeBtn.type = "button";
@@ -85,6 +97,7 @@
         });
 
         header.appendChild(nameInput);
+        header.appendChild(downloadBtn);
         header.appendChild(removeBtn);
         el.appendChild(header);
 
@@ -221,6 +234,143 @@
             loginError.hidden = false;
         }
     });
+
+    let logoImagePromise = null;
+    function loadLogo() {
+        if (logoImagePromise) return logoImagePromise;
+        logoImagePromise = new Promise(function (resolve, reject) {
+            const img = new Image();
+            img.onload = function () { resolve(img); };
+            img.onerror = reject;
+            img.src = "../favicon.png";
+        });
+        return logoImagePromise;
+    }
+
+    function fitText(ctx, text, maxWidth, baseSize, fontWeight) {
+        let size = baseSize;
+        ctx.font = fontWeight + " " + size + "px Arial";
+        while (ctx.measureText(text).width > maxWidth && size > 24) {
+            size -= 2;
+            ctx.font = fontWeight + " " + size + "px Arial";
+        }
+        return size;
+    }
+
+    function slugify(s) {
+        return String(s || "group")
+            .toLowerCase()
+            .replace(/«|»|"|'/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9а-яё-]/gi, "")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "") || "group";
+    }
+
+    async function generateStoryImage(group) {
+        const W = 1080, H = 1920;
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+
+        const bg = ctx.createRadialGradient(W / 2, H * 0.35, 80, W / 2, H * 0.35, H);
+        bg.addColorStop(0, "#3a0606");
+        bg.addColorStop(0.45, "#0d0202");
+        bg.addColorStop(1, "#000");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(40, 40, W - 80, H - 80);
+
+        try {
+            const logo = await loadLogo();
+            const logoSize = 280;
+            ctx.drawImage(logo, (W - logoSize) / 2, 130, logoSize, logoSize);
+        } catch (e) {}
+
+        ctx.fillStyle = "#bdbdbd";
+        ctx.textAlign = "center";
+        ctx.font = "700 30px Arial";
+        ctx.fillText("БОКСЕРСКИЙ КЛУБ", W / 2, 470);
+        ctx.fillStyle = "#e11d1d";
+        ctx.font = "700 38px Arial";
+        ctx.fillText("«ДОБРЫЙ ПИТЕР»", W / 2, 520);
+
+        const titleText = (group.name || "").toUpperCase();
+        const titleBoxX = 90, titleBoxY = 620, titleBoxW = W - 180, titleBoxH = 130;
+        ctx.fillStyle = "#e11d1d";
+        ctx.fillRect(titleBoxX, titleBoxY, titleBoxW, titleBoxH);
+        ctx.fillStyle = "#fff";
+        const titleSize = fitText(ctx, titleText, titleBoxW - 80, 64, "900");
+        ctx.font = "900 " + titleSize + "px Arial";
+        ctx.textBaseline = "middle";
+        ctx.fillText(titleText, W / 2, titleBoxY + titleBoxH / 2 + 4);
+        ctx.textBaseline = "alphabetic";
+
+        const sessions = group.sessions || [];
+        const rowsTop = 830;
+        const rowsBottom = 1740;
+        const rowGap = 20;
+        const maxRowH = 130;
+        const minRowH = 70;
+        const available = rowsBottom - rowsTop;
+        const rowsCount = Math.max(sessions.length, 1);
+        const rowH = Math.max(minRowH, Math.min(maxRowH, (available - rowGap * (rowsCount - 1)) / rowsCount));
+        const totalH = rowH * rowsCount + rowGap * (rowsCount - 1);
+        const startY = rowsTop + (available - totalH) / 2;
+
+        sessions.forEach(function (s, i) {
+            const y = startY + i * (rowH + rowGap);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.fillRect(90, y, W - 180, rowH);
+            ctx.fillStyle = "#e11d1d";
+            ctx.fillRect(90, y, 8, rowH);
+
+            const dayText = s.day || "";
+            const timeText = (s.start || "") + " – " + (s.end || "");
+            const dayMaxW = (W - 180) * 0.55 - 60;
+            const timeMaxW = (W - 180) * 0.45 - 60;
+
+            ctx.fillStyle = "#dcdcdc";
+            ctx.textAlign = "left";
+            const daySize = fitText(ctx, dayText, dayMaxW, Math.min(56, rowH * 0.44), "600");
+            ctx.font = "600 " + daySize + "px Arial";
+            ctx.textBaseline = "middle";
+            ctx.fillText(dayText, 130, y + rowH / 2);
+
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            const timeSize = fitText(ctx, timeText, timeMaxW, Math.min(58, rowH * 0.46), "800");
+            ctx.font = "800 " + timeSize + "px Arial";
+            ctx.fillText(timeText, W - 130, y + rowH / 2);
+            ctx.textBaseline = "alphabetic";
+        });
+
+        if (!sessions.length) {
+            ctx.fillStyle = "#bdbdbd";
+            ctx.textAlign = "center";
+            ctx.font = "italic 36px Arial";
+            ctx.fillText("Расписание не задано", W / 2, rowsTop + available / 2);
+        }
+
+        ctx.fillStyle = "#e11d1d";
+        ctx.textAlign = "center";
+        ctx.font = "800 38px Arial";
+        ctx.fillText("DOBRYPITER.PRO", W / 2, 1840);
+
+        const blob = await new Promise(function (resolve) { canvas.toBlob(resolve, "image/png"); });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = slugify(group.name) + "-story.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+    }
 
     if (getToken()) showEditor();
     else showLogin();
