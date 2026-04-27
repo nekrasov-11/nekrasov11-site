@@ -129,9 +129,19 @@ body::after {
 .hero {
     position: relative;
     width: 100%;
-    height: calc(100vh - 260px);
-    min-height: 420px;
+    max-width: 1100px;
+    margin: 32px auto 0;
+    padding: 0 32px;
+    box-sizing: border-box;
+}
+
+.hero-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid var(--border);
 }
 
 .hero-video {
@@ -512,8 +522,8 @@ body::after {
         font-size: 0.85rem;
     }
     .hero {
-        height: 55vh;
-        min-height: 340px;
+        margin-top: 20px;
+        padding: 0 20px;
     }
     .content {
         padding: 48px 20px;
