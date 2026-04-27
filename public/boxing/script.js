@@ -16,6 +16,40 @@
 
     update();
 
+    const grid = document.getElementById("schedule-grid");
+    if (grid) {
+        fetch("/api/boxing/schedule")
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+            .then(function (data) { renderSchedule(grid, data); })
+            .catch(function () {
+                grid.innerHTML = '<p class="schedule-loading">Не удалось загрузить расписание.</p>';
+            });
+    }
+
+    function renderSchedule(target, data) {
+        const groups = (data && Array.isArray(data.groups)) ? data.groups : [];
+        if (!groups.length) {
+            target.innerHTML = '<p class="schedule-loading">Расписание пока не заполнено.</p>';
+            return;
+        }
+        const html = groups.map(function (g) {
+            const rows = (g.sessions || []).map(function (s) {
+                return '<tr><td>' + escapeHtml(s.day) + '</td><td>' + escapeHtml(s.start) + ' – ' + escapeHtml(s.end) + '</td></tr>';
+            }).join("");
+            return '<article class="schedule-card">' +
+                '<h3>' + escapeHtml(g.name) + '</h3>' +
+                '<table class="schedule-table"><tbody>' + rows + '</tbody></table>' +
+                '</article>';
+        }).join("");
+        target.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (ch) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+        });
+    }
+
     const video = document.querySelector(".hero-video");
     const toggle = document.querySelector(".hero-sound-toggle");
     const label = toggle && toggle.querySelector(".hero-sound-label");

@@ -326,6 +326,13 @@ body::after {
     gap: 20px;
 }
 
+.schedule-loading {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-style: italic;
+    padding: 16px 4px;
+}
+
 .schedule-card {
     border: 1px solid var(--border);
     border-radius: 4px;
