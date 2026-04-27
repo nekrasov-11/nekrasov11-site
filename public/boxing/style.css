@@ -206,58 +206,84 @@ body::after {
     }
 }
 
-.tg-fab {
+.fab-stack {
     position: fixed;
     right: 24px;
     bottom: 24px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fab {
+    position: relative;
     width: 60px;
     height: 60px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-    color: #fff;
     border-radius: 50%;
-    box-shadow: 0 6px 18px rgba(34, 158, 217, 0.45), 0 2px 6px rgba(0, 0, 0, 0.4);
-    z-index: 100;
+    color: #fff;
     text-decoration: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tg-fab svg {
+.fab svg {
     position: relative;
     z-index: 2;
-    transform: translateX(-1px);
 }
 
-.tg-fab:hover {
+.fab:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 10px 24px rgba(34, 158, 217, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-.tg-fab:active {
+.fab:active {
     transform: translateY(0) scale(0.98);
 }
 
-.tg-fab-pulse {
+.fab-tg {
+    background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+    box-shadow: 0 6px 18px rgba(34, 158, 217, 0.45), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.fab-tg svg { transform: translateX(-1px); }
+
+.fab-tg:hover {
+    box-shadow: 0 10px 24px rgba(34, 158, 217, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.fab-vk {
+    background: linear-gradient(135deg, #4A76A8 0%, #2A4F7E 100%);
+    box-shadow: 0 6px 18px rgba(74, 118, 168, 0.45), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.fab-vk:hover {
+    box-shadow: 0 10px 24px rgba(74, 118, 168, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.fab-pulse {
     position: absolute;
     inset: 0;
     border-radius: 50%;
     background: rgba(42, 171, 238, 0.5);
     z-index: 1;
-    animation: tg-pulse 2.4s ease-out infinite;
+    animation: fab-pulse 2.4s ease-out infinite;
 }
 
-@keyframes tg-pulse {
+@keyframes fab-pulse {
     0%   { transform: scale(1);   opacity: 0.6; }
     70%  { transform: scale(1.6); opacity: 0;   }
     100% { transform: scale(1.6); opacity: 0;   }
 }
 
 @media (max-width: 600px) {
-    .tg-fab {
+    .fab-stack {
         right: 16px;
         bottom: 16px;
+        gap: 10px;
+    }
+    .fab {
         width: 54px;
         height: 54px;
     }
