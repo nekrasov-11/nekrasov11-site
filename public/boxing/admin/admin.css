@@ -107,6 +107,9 @@ input:focus, select:focus {
     border: 1px solid var(--border);
     background: transparent;
     color: var(--fg);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
